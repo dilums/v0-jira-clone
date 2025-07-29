@@ -1,4 +1,4 @@
-# Jira Clone
+# Jira Clone with V0
 
 *Automatically synced with your [v0.dev](https://v0.dev) deployments*
 
