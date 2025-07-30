@@ -28,7 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { getCurrentUser } from "@/lib/current-user"
-import { useTheme } from "@/lib/theme-context"
+import { useTheme } from "next-themes"
 
 // Mock notifications data
 const notifications = [

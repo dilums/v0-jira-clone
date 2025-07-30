@@ -14,9 +14,9 @@ import { getPersonById } from "@/lib/people"
 import { getIssuesByProject } from "@/lib/issues"
 
 const statusColors = {
-  Active: "bg-green-100 text-green-800",
-  Planning: "bg-blue-100 text-blue-800",
-  Archived: "bg-gray-100 text-gray-800",
+  Active: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+  Planning: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+  Archived: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
 }
 
 export default function ProjectsPage() {
@@ -36,8 +36,8 @@ export default function ProjectsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-600 mt-2">Manage and track all your projects</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Projects</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Manage and track all your projects</p>
         </div>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
@@ -46,19 +46,19 @@ export default function ProjectsPage() {
       </div>
 
       {/* Filters and View Toggle */}
-      <div className="flex items-center justify-between bg-white p-4 rounded-lg border">
+      <div className="flex items-center justify-between bg-white dark:bg-zinc-900 p-4 rounded-lg border border-gray-200 dark:border-zinc-800">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <Search className="h-4 w-4 text-gray-400" />
+            <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
             <Input
               placeholder="Search projects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-64"
+              className="w-64 bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-40 bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -91,11 +91,22 @@ export default function ProjectsPage() {
 
             return (
               <Link key={project.id} href={`/projects/${project.id}`}>
-                <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full">
-                  <CardHeader>
+                <Card className="cursor-pointer hover:shadow-lg transition-shadow h-full dark:bg-zinc-900 dark:border-zinc-800 relative">
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-1 rounded-l-md"
+                    style={{ backgroundColor: project.color }}
+                  />
+                  <CardHeader className="pl-5">
                     <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <CardTitle className="text-lg">{project.name}</CardTitle>
+                      <div className="space-y-1 flex-1">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={project.imageURL || "/placeholder.svg"}
+                            alt={project.name}
+                            className="w-8 h-8 object-contain"
+                          />
+                          <CardTitle className="text-lg dark:text-white">{project.name}</CardTitle>
+                        </div>
                         <Badge
                           variant="secondary"
                           className={statusColors[project.status as keyof typeof statusColors]}
@@ -104,9 +115,9 @@ export default function ProjectsPage() {
                         </Badge>
                       </div>
                     </div>
-                    <CardDescription className="line-clamp-2">{project.description}</CardDescription>
+                    <CardDescription className="line-clamp-2 dark:text-gray-400">{project.description}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pl-5">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center space-x-2">
@@ -121,16 +132,16 @@ export default function ProjectsPage() {
                                     .join("")}
                                 </AvatarFallback>
                               </Avatar>
-                              <span className="text-gray-600">{owner.name}</span>
+                              <span className="text-gray-600 dark:text-gray-400">{owner.name}</span>
                             </>
                           )}
                         </div>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs dark:border-zinc-600">
                           {project.team}
                         </Badge>
                       </div>
 
-                      <div className="flex items-center justify-between text-sm text-gray-600">
+                      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center space-x-1">
                           <Calendar className="h-4 w-4" />
                           <span>{new Date(project.endDate).toLocaleDateString()}</span>
@@ -143,10 +154,11 @@ export default function ProjectsPage() {
                         </div>
                       </div>
 
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
                         <div
-                          className="bg-blue-600 h-2 rounded-full"
+                          className="h-2 rounded-full transition-all duration-300"
                           style={{
+                            backgroundColor: project.color,
                             width: totalIssues > 0 ? `${((totalIssues - openIssues) / totalIssues) * 100}%` : "0%",
                           }}
                         ></div>
@@ -159,8 +171,8 @@ export default function ProjectsPage() {
           })}
         </div>
       ) : (
-        <div className="bg-white rounded-lg border">
-          <div className="grid grid-cols-12 gap-4 p-4 border-b font-medium text-sm text-gray-600">
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800">
+          <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 dark:border-zinc-800 font-medium text-sm text-gray-600 dark:text-gray-400">
             <div className="col-span-4">Project</div>
             <div className="col-span-2">Status</div>
             <div className="col-span-2">Owner</div>
@@ -176,11 +188,19 @@ export default function ProjectsPage() {
 
             return (
               <Link key={project.id} href={`/projects/${project.id}`}>
-                <div className="grid grid-cols-12 gap-4 p-4 border-b hover:bg-gray-50 cursor-pointer">
-                  <div className="col-span-4">
-                    <div>
-                      <h3 className="font-medium">{project.name}</h3>
-                      <p className="text-sm text-gray-600 line-clamp-1">{project.description}</p>
+                <div className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer relative">
+                  <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: project.color }} />
+                  <div className="col-span-4 pl-3">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={project.imageURL || "/placeholder.svg"}
+                        alt={project.name}
+                        className="w-6 h-6 object-contain"
+                      />
+                      <div>
+                        <h3 className="font-medium dark:text-white">{project.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{project.description}</p>
+                      </div>
                     </div>
                   </div>
                   <div className="col-span-2">
@@ -200,19 +220,25 @@ export default function ProjectsPage() {
                               .join("")}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="text-sm">{owner.name}</span>
+                        <span className="text-sm dark:text-gray-300">{owner.name}</span>
                       </div>
                     )}
                   </div>
                   <div className="col-span-2">
-                    <span className="text-sm">{new Date(project.endDate).toLocaleDateString()}</span>
+                    <span className="text-sm dark:text-gray-300">{new Date(project.endDate).toLocaleDateString()}</span>
                   </div>
                   <div className="col-span-2">
                     <div className="flex items-center space-x-2">
-                      <div className="flex-1 bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${progress}%` }}></div>
+                      <div className="flex-1 bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
+                        <div
+                          className="h-2 rounded-full"
+                          style={{
+                            backgroundColor: project.color,
+                            width: `${progress}%`,
+                          }}
+                        ></div>
                       </div>
-                      <span className="text-xs text-gray-600">{progress}%</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">{progress}%</span>
                     </div>
                   </div>
                 </div>
@@ -224,7 +250,7 @@ export default function ProjectsPage() {
 
       {filteredProjects.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No projects found matching your criteria.</p>
+          <p className="text-gray-500 dark:text-gray-400">No projects found matching your criteria.</p>
         </div>
       )}
     </div>
