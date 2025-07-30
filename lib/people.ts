@@ -50,7 +50,7 @@ export const people = [
   {
     id: "af0a3b37-dd50-478c-be1c-e73c5571b67a",
     name: "Zoe Blake",
-    imageURL: "https://res.cloudinary.com/ds574fco0/image/upload/v1753690877/people/3_ixqhqr.jpg",
+    imageURL: "https://res.cloudinary.com/ds574fco0/image/upload/v1753690878/people/3_kfxcej.jpg",
     email: "zoe.blake@company.com",
     workingHours: {
       start: "11:00",
@@ -66,7 +66,7 @@ export const people = [
   {
     id: "13343295-5d4a-4b16-9eaf-3d7fd129424e",
     name: "Finn Cole",
-    imageURL: "https://res.cloudinary.com/ds574fco0/image/upload/v1753690878/people/4_ixqhqr.jpg",
+    imageURL: "https://res.cloudinary.com/ds574fco0/image/upload/v1753690879/people/6_fyrri9.jpg",
     email: "finn.cole@company.com",
     workingHours: {
       start: "07:00",
@@ -82,7 +82,7 @@ export const people = [
   {
     id: "a931e382-f728-4ef9-aa6b-a39ee2ab1bd7",
     name: "Ivy Rose",
-    imageURL: "https://res.cloudinary.com/ds574fco0/image/upload/v1753690878/people/5_mjcvdj.jpg",
+    imageURL: "https://res.cloudinary.com/ds574fco0/image/upload/v1753690877/people/4_ci0ymm.jpg",
     email: "ivy.rose@company.com",
     workingHours: {
       start: "09:30",

@@ -126,7 +126,7 @@ export default function IssuesPage() {
           const project = getProjectById(issue.projectId)
 
           return (
-            <Link key={issue.id} href={`/issues/${issue.id}`}>
+            <Link key={issue.id} href={`/issues/${issue.id}`} className='block' >
               <Card className="cursor-pointer hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">

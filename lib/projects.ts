@@ -7,6 +7,7 @@ export const projects = [
     status: "Archived",
     startDate: "2025-03-23",
     endDate: "2025-09-12",
+    imageURL:"https://res.cloudinary.com/ds574fco0/image/upload/v1753844707/mock/revamp_iqcvlz.png",
     team: "qa",
   },
   {
@@ -17,6 +18,7 @@ export const projects = [
     status: "Planning",
     startDate: "2025-04-15",
     endDate: "2025-10-22",
+    imageURL:"https://res.cloudinary.com/ds574fco0/image/upload/v1753844707/mock/customer_i8fnr5.png",
     team: "marketing",
   },
   {
@@ -27,6 +29,7 @@ export const projects = [
     status: "Archived",
     startDate: "2025-04-05",
     endDate: "2025-09-02",
+    imageURL:"https://res.cloudinary.com/ds574fco0/image/upload/v1753844707/mock/team_brirwy.png",
     team: "product",
   },
   {
@@ -37,6 +40,7 @@ export const projects = [
     status: "Planning",
     startDate: "2025-02-07",
     endDate: "2025-09-15",
+    imageURL:"https://res.cloudinary.com/ds574fco0/image/upload/v1753844707/mock/marketing_runrac.png",
     team: "product",
   },
   {
@@ -47,6 +51,7 @@ export const projects = [
     status: "Active",
     startDate: "2025-07-14",
     endDate: "2025-08-17",
+    imageURL:"https://res.cloudinary.com/ds574fco0/image/upload/v1753844706/mock/tools_oexp5l.png",
     team: "dev",
   },
 ]
