@@ -1,12 +1,17 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import Link from "next/link"
-import { Search, Plus, Bell, Sun, Moon, Monitor, Settings, User, LogOut } from "lucide-react"
+import { Search, Plus, Bell, Sun, Moon, Monitor, Settings, User, LogOut, Users, FolderPlus, Bug } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,20 +20,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import { getCurrentUser } from "@/lib/current-user"
 import { useTheme } from "next-themes"
+import { projects } from "@/lib/projects"
+import { people } from "@/lib/people"
 
 // Mock notifications data
 const notifications = [
@@ -92,12 +99,33 @@ const getTypeColor = (type: string) => {
 export default function TopNavigation() {
   const [searchQuery, setSearchQuery] = useState("")
   const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [newIssueOpen, setNewIssueOpen] = useState(false)
+  const [newProjectOpen, setNewProjectOpen] = useState(false)
+  const [newTeamOpen, setNewTeamOpen] = useState(false)
   const currentUser = getCurrentUser()
   const { theme, setTheme } = useTheme()
 
   const unreadCount = notifications.filter((n) => !n.read).length
 
   const ThemeIcon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor
+
+  const handleCreateIssue = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Handle issue creation logic here
+    setNewIssueOpen(false)
+  }
+
+  const handleCreateProject = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Handle project creation logic here
+    setNewProjectOpen(false)
+  }
+
+  const handleCreateTeam = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Handle team creation logic here
+    setNewTeamOpen(false)
+  }
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 z-50">
@@ -137,20 +165,423 @@ export default function TopNavigation() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem>
-                <Plus className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={() => setNewIssueOpen(true)}>
+                <Bug className="h-4 w-4 mr-2" />
                 New Issue
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Plus className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={() => setNewProjectOpen(true)}>
+                <FolderPlus className="h-4 w-4 mr-2" />
                 New Project
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Plus className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={() => setNewTeamOpen(true)}>
+                <Users className="h-4 w-4 mr-2" />
                 New Team
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* New Issue Dialog */}
+          <Dialog open={newIssueOpen} onOpenChange={setNewIssueOpen}>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Bug className="h-5 w-5" />
+                  Create New Issue
+                </DialogTitle>
+                <DialogDescription>Create a new issue to track work, bugs, or feature requests.</DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleCreateIssue} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="issue-project">Project *</Label>
+                    <Select required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select project" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {projects.map((project) => (
+                          <SelectItem key={project.id} value={project.id}>
+                            <div className="flex items-center gap-2">
+                              <img
+                                src={project.imageURL || "/placeholder.svg"}
+                                alt={project.name}
+                                className="w-4 h-4"
+                              />
+                              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: project.color }} />
+                              {project.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="issue-type">Issue Type *</Label>
+                    <Select required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bug">🐛 Bug</SelectItem>
+                        <SelectItem value="feature">✨ Feature</SelectItem>
+                        <SelectItem value="task">📋 Task</SelectItem>
+                        <SelectItem value="story">📖 Story</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="issue-title">Title *</Label>
+                  <Input
+                    id="issue-title"
+                    placeholder="Enter issue title"
+                    required
+                    className="bg-white dark:bg-zinc-800"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="issue-description">Description</Label>
+                  <Textarea
+                    id="issue-description"
+                    placeholder="Describe the issue in detail..."
+                    rows={4}
+                    className="bg-white dark:bg-zinc-800"
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="issue-priority">Priority</Label>
+                    <Select defaultValue="medium">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="critical">🔴 Critical</SelectItem>
+                        <SelectItem value="high">🟠 High</SelectItem>
+                        <SelectItem value="medium">🟡 Medium</SelectItem>
+                        <SelectItem value="low">🔵 Low</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="issue-assignee">Assignee</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Assign to..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {people.map((person) => (
+                          <SelectItem key={person.id} value={person.id}>
+                            <div className="flex items-center gap-2">
+                              <Avatar className="w-4 h-4">
+                                <AvatarImage src={person.imageURL || "/placeholder.svg"} />
+                                <AvatarFallback className="text-xs">
+                                  {person.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              {person.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="issue-points">Story Points</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Points" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">1</SelectItem>
+                        <SelectItem value="2">2</SelectItem>
+                        <SelectItem value="3">3</SelectItem>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="8">8</SelectItem>
+                        <SelectItem value="13">13</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="issue-labels">Labels</Label>
+                  <Input
+                    id="issue-labels"
+                    placeholder="Add labels (comma separated)"
+                    className="bg-white dark:bg-zinc-800"
+                  />
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setNewIssueOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Create Issue</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* New Project Dialog */}
+          <Dialog open={newProjectOpen} onOpenChange={setNewProjectOpen}>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <FolderPlus className="h-5 w-5" />
+                  Create New Project
+                </DialogTitle>
+                <DialogDescription>Set up a new project to organize your team's work.</DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleCreateProject} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="project-name">Project Name *</Label>
+                  <Input
+                    id="project-name"
+                    placeholder="Enter project name"
+                    required
+                    className="bg-white dark:bg-zinc-800"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="project-key">Project Key *</Label>
+                  <Input
+                    id="project-key"
+                    placeholder="e.g., PROJ"
+                    required
+                    className="bg-white dark:bg-zinc-800"
+                    maxLength={10}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    A short identifier for your project (2-10 characters)
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="project-description">Description</Label>
+                  <Textarea
+                    id="project-description"
+                    placeholder="Describe your project..."
+                    rows={3}
+                    className="bg-white dark:bg-zinc-800"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="project-lead">Project Lead *</Label>
+                    <Select required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select project lead" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {people.map((person) => (
+                          <SelectItem key={person.id} value={person.id}>
+                            <div className="flex items-center gap-2">
+                              <Avatar className="w-4 h-4">
+                                <AvatarImage src={person.imageURL || "/placeholder.svg"} />
+                                <AvatarFallback className="text-xs">
+                                  {person.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              {person.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="project-team">Default Team</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select team" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="dev">Development</SelectItem>
+                        <SelectItem value="design">Design</SelectItem>
+                        <SelectItem value="product">Product</SelectItem>
+                        <SelectItem value="marketing">Marketing</SelectItem>
+                        <SelectItem value="qa">QA</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="project-start">Start Date</Label>
+                    <Input id="project-start" type="date" className="bg-white dark:bg-zinc-800" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="project-end">Target End Date</Label>
+                    <Input id="project-end" type="date" className="bg-white dark:bg-zinc-800" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="project-template">Project Template</Label>
+                  <Select defaultValue="kanban">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kanban">📋 Kanban</SelectItem>
+                      <SelectItem value="scrum">🏃 Scrum</SelectItem>
+                      <SelectItem value="basic">📝 Basic</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="project-public" />
+                  <Label htmlFor="project-public">Make project public</Label>
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setNewProjectOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Create Project</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* New Team Dialog */}
+          <Dialog open={newTeamOpen} onOpenChange={setNewTeamOpen}>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Create New Team
+                </DialogTitle>
+                <DialogDescription>Create a new team to organize people and manage permissions.</DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleCreateTeam} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="team-name">Team Name *</Label>
+                  <Input id="team-name" placeholder="Enter team name" required className="bg-white dark:bg-zinc-800" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="team-description">Description</Label>
+                  <Textarea
+                    id="team-description"
+                    placeholder="Describe the team's purpose and responsibilities..."
+                    rows={3}
+                    className="bg-white dark:bg-zinc-800"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="team-lead">Team Lead *</Label>
+                    <Select required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select team lead" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {people.map((person) => (
+                          <SelectItem key={person.id} value={person.id}>
+                            <div className="flex items-center gap-2">
+                              <Avatar className="w-4 h-4">
+                                <AvatarImage src={person.imageURL || "/placeholder.svg"} />
+                                <AvatarFallback className="text-xs">
+                                  {person.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              {person.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="team-type">Team Type</Label>
+                    <Select defaultValue="cross-functional">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="development">💻 Development</SelectItem>
+                        <SelectItem value="design">🎨 Design</SelectItem>
+                        <SelectItem value="product">📊 Product</SelectItem>
+                        <SelectItem value="marketing">📢 Marketing</SelectItem>
+                        <SelectItem value="qa">🧪 QA</SelectItem>
+                        <SelectItem value="cross-functional">🤝 Cross-functional</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="team-members">Initial Members</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Add team members..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {people.map((person) => (
+                        <SelectItem key={person.id} value={person.id}>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="w-4 h-4">
+                              <AvatarImage src={person.imageURL || "/placeholder.svg"} />
+                              <AvatarFallback className="text-xs">
+                                {person.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </AvatarFallback>
+                            </Avatar>
+                            {person.name} - {person.role}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    You can add more members after creating the team
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="team-permissions">Default Permissions</Label>
+                  <Select defaultValue="member">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">🔑 Admin - Full access</SelectItem>
+                      <SelectItem value="member">👤 Member - Standard access</SelectItem>
+                      <SelectItem value="viewer">👁️ Viewer - Read-only access</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-3">
+                  <Label>Team Settings</Label>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Switch id="team-private" />
+                      <Label htmlFor="team-private">Private team</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch id="team-notifications" defaultChecked />
+                      <Label htmlFor="team-notifications">Enable team notifications</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch id="team-calendar" defaultChecked />
+                      <Label htmlFor="team-calendar">Create team calendar</Label>
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setNewTeamOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Create Team</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
 
           {/* Theme Toggle */}
           <DropdownMenu>
